@@ -1,0 +1,2 @@
+CompileFlags:
+  Add: [-m32, -nostdlib, -ffreestanding, -target, i386-unknown-none]

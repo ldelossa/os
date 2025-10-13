@@ -1,0 +1,6 @@
+*.o
+qemu.log
+*.bin
+
+src/kernel/kernel
+src/boot/boot
