@@ -50,18 +50,18 @@ clean:
 
 .PHONY:
 run:
-	qemu-system-x86_64 -d cpu_reset,int -D qemu.log -nographic ./bin/os-image.bin
+	qemu-system-i386 -d cpu_reset,int -D qemu.log -nographic ./bin/os-image.bin
 
 run-vga:
-	qemu-system-x86_64 -d cpu_reset,int -D qemu.log -vnc :1 ./bin/os-image.bin
+	qemu-system-i386 -d cpu_reset,int -D qemu.log -vnc :1 ./bin/os-image.bin
 
 .PHONY:
 run-debug:
-	qemu-system-x86_64 -d cpu_reset,int -D qemu.log -nographic -s -S ./bin/os-image.bin
+	qemu-system-i386 -d cpu_reset,int -D qemu.log -nographic -s -S ./bin/os-image.bin
 
 .PHONY:
 run-debug-vga:
-	qemu-system-x86_64 -d cpu_reset,int -D qemu.log -vnc :1 -s -S ./bin/os-image.bin
+	qemu-system-i386 -d cpu_reset,int -D qemu.log -vnc :1 -s -S ./bin/os-image.bin
 
 .PHONY:
 debug:
@@ -71,8 +71,13 @@ debug:
 # connect first, then add the symbol file, this avoids a bug where QEMU's gdb
 # stub reports the machine as x86_64 and our local gdb is debugging a i386 file.
 debug-boot:
-	gdb -ex "target remote localhost:1234" -ex "add-symbol-file ./src/boot/boot" -ex "layout asm"
+	gdb -ex "target remote localhost:1234" \
+		-ex "add-symbol-file ./src/boot/boot 0x7c00" \
+		-ex "layout asm"
 
 .PHONY:
 debug-kernel:
-	gdb -ex "target remote localhost:1234" -ex "add-symbol-file ./src/kernel/kernel"
+	gdb -ex "target remote localhost:1234" \
+		-ex "symbol-file ./src/kernel/kernel" \
+		-ex "layout src"
+
