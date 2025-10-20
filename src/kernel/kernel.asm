@@ -14,7 +14,7 @@ _start:
 	mov fs, ax
 	mov gs, ax
 	mov ss, ax
-	mov ebp, 0x200000
+	mov ebp, 0x300000
 	mov esp, ebp
 	call kernel_main         ; call the C main function
 

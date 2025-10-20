@@ -1,7 +1,8 @@
 #include "heap.h"
-#include "memory.h"
 
 #include <stdint.h>
+
+#include "memory.h"
 
 // heap size is 100MB
 #define HEAP_SIZE (100 * 1024 * 1024)
@@ -31,17 +32,15 @@ typedef union {
 
 page_descriptor heap[HEAP_PAGE_COUNT] = {0};
 
-void heap_init() {
-	memset(heap, 0, sizeof(heap));
-}
+void heap_init() { memset(heap, 0, sizeof(heap)); }
 
 void *heap_malloc(uint32_t size) {
     if (!size) {
         return 0;
     }
 
-	uint32_t pages = (size + (HEAP_PAGE_SIZE - 1)) & ~(HEAP_PAGE_SIZE - 1);
-	pages = pages / HEAP_PAGE_SIZE;
+    uint32_t pages = (size + (HEAP_PAGE_SIZE - 1)) & ~(HEAP_PAGE_SIZE - 1);
+    pages = pages / HEAP_PAGE_SIZE;
 
     for (uint32_t i = 0; i < HEAP_PAGE_COUNT; i++) {
         // Start of a previous allocation, run until we find the end,
@@ -81,21 +80,30 @@ void *heap_malloc(uint32_t size) {
     return 0;
 };
 
+void *heap_zalloc(uint32_t size) {
+    void *p = heap_malloc(size);
+    if (!p) {
+        return p;
+    }
+    memset(p, 0, size);
+    return p;
+}
+
 void heap_free(void *ptr) {
-	uint32_t offset = ((uint32_t)ptr - HEAP_START) / HEAP_PAGE_SIZE;
+    uint32_t offset = ((uint32_t)ptr - HEAP_START) / HEAP_PAGE_SIZE;
 
-	if (offset >= HEAP_PAGE_COUNT || !heap[offset].s.first) {
-		// invalid pointer
-		return;
-	}
+    if (offset >= HEAP_PAGE_COUNT || !heap[offset].s.first) {
+        // invalid pointer
+        return;
+    }
 
-	uint32_t last = offset;
-	for (; last < HEAP_PAGE_COUNT; last++) {
-		if (heap[last].s.last == 1) {
-			break;
-		}
-	}
+    uint32_t last = offset;
+    for (; last < HEAP_PAGE_COUNT; last++) {
+        if (heap[last].s.last == 1) {
+            break;
+        }
+    }
 
-	heap[offset].byte = 0;
-	heap[last].byte = 0;
+    heap[offset].byte = 0;
+    heap[last].byte = 0;
 }
