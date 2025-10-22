@@ -1,3 +1,4 @@
+#include "drivers/ata/ata.h"
 #include "drivers/pic/pic.h"
 #include "drivers/vga/vga.h"
 #include "idt.h"
@@ -40,6 +41,8 @@ void kernel_main() {
     paging_set_directory_table(table);
     paging_enable();
     vga_write_str("Paging enabled\n", VGA_DEFAULT_CHAR);
+
+    ata_init();
 
     while (1) {
         // Spin forever
