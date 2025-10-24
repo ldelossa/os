@@ -7,9 +7,9 @@ loader_start:
 jmp start;
 
 ; patched during compilation process, once we know the number of sectors our
-; kernel image takes up, used in ata_32.asm.
+; kernel image takes up, used in ata_32_ext.asm.
 kernel_sectors:
-db 0x00
+dd 0x00000000
 
 ; setup global descriptor table, flat memory model.
 gdt_start:
@@ -97,7 +97,7 @@ jump_kernel:
 	jmp $
 
 ; include ATA routine for reading kernel sectors and loading to memory.
-%include "src/boot/ata_32.asm"
+%include "src/boot/ata_32_ext.asm"
 
 ; ensure our bootloader does not exceed 512 bytes
 %define LOADER_SIZE ($ - loader_start)

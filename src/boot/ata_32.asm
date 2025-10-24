@@ -7,7 +7,7 @@ B1_ERR_FEAT equ 0x1F1
 ; configure sector count for r/w
 B1_SEC_COUNT equ 0x1F2
 ; LBA low bits
-B1_LBA_LO equ 0x1F3
+B1_LBA_LOW equ 0x1F3
 ; LBA middle bits
 B1_LBA_MID equ 0x1F4
 ; LBA high bits
@@ -43,7 +43,7 @@ ata_load_kernel:
 	jnz .delay
 
 	; configure LBA of 0x1
-	mov dx, B1_LBA_LO
+	mov dx, B1_LBA_LOW
 	mov al, KERNEL_LBA
 	out dx, al
 

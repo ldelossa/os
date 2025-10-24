@@ -11,12 +11,16 @@ echo "kernel size is ${kernel_sectors} sectors"
 
 cat ./bin/boot.bin ./bin/kernel.bin > ./bin/os-image.bin
 
-# format string for creating raw byte
-kernel_sectors_bytes=$(printf '\\x%02x' $kernel_sectors)
+# format string for creating raw 32-bit value (little-endian)
+kernel_sectors_bytes=$(printf '\\x%02x\\x%02x\\x%02x\\x%02x' \
+    $((kernel_sectors & 0xFF)) \
+    $(((kernel_sectors >> 8) & 0xFF)) \
+    $(((kernel_sectors >> 16) & 0xFF)) \
+    $(((kernel_sectors >> 24) & 0xFF)))
 
-# perform the patch
+# perform the patch (write 4 bytes for 32-bit value)
 printf %b "$kernel_sectors_bytes" |
-	dd of=./bin/os-image.bin bs=1 seek=2 count=1 conv=notrunc
+	dd of=./bin/os-image.bin bs=1 seek=2 count=4 conv=notrunc
 
 image_size=$(stat -c %s ./bin/os-image.bin)
 # if image size is not a multiple of 512, pad it, so its a valid disk image
